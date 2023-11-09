@@ -6,13 +6,15 @@
 #    By: abenamar <abenamar@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/04 14:00:25 by abenamar          #+#    #+#              #
-#    Updated: 2023/11/05 22:27:38 by abenamar         ###   ########.fr        #
+#    Updated: 2023/11/09 00:40:43 by abenamar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME := philo
 
 INCLUDES := -I $(CURDIR)
+
+LDLIBS := -pthread
 
 # **************************************************************************** #
 #                                                                              #
@@ -34,8 +36,16 @@ SRCS += ft_pstderr.c
 #                                                                              #
 # **************************************************************************** #
 
-SRCS += ft_clear_args.c
 SRCS += ft_init_args.c
+
+# **************************************************************************** #
+#                                                                              #
+#                                   threads                                    #
+#                                                                              #
+# **************************************************************************** #
+
+SRCS += ft_routine.c
+SRCS += ft_simulate.c
 
 SRCS += philo.c
 
@@ -53,7 +63,7 @@ RM := rm -f
 	$(CC) $(CFLAGS) -c $< -o $@ $(INCLUDES)
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(INCLUDES)
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(INCLUDES) $(LDLIBS)
 
 all: $(NAME)
 
