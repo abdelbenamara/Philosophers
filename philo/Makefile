@@ -6,7 +6,7 @@
 #    By: abenamar <abenamar@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/04 14:00:25 by abenamar          #+#    #+#              #
-#    Updated: 2023/11/12 14:27:21 by abenamar         ###   ########.fr        #
+#    Updated: 2023/11/16 21:50:54 by abenamar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,6 +23,12 @@ SRCS += ft_atos.c
 SRCS += ft_stoa.c
 
 SRCS += ft_pstderr.c
+
+SRCS += ft_lock_free.c
+SRCS += ft_lock_init.c
+SRCS += ft_lock_acquire.c
+SRCS += ft_lock_release.c
+SRCS += ft_lock_locked.c
 
 SRCS += ft_routine.c
 SRCS += ft_simulate.c
