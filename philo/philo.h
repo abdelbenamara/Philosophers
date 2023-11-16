@@ -6,12 +6,14 @@
 /*   By: abenamar <abenamar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 14:12:40 by abenamar          #+#    #+#             */
-/*   Updated: 2023/11/14 09:52:27 by abenamar         ###   ########.fr       */
+/*   Updated: 2023/11/17 00:07:56 by abenamar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
 # define PHILO_H
+
+# define _DEFAULT_SOURCE
 
 # include <pthread.h>
 # include <stdio.h>
@@ -49,7 +51,7 @@ typedef enum e_state
 
 typedef struct s_lock
 {
-	uint8_t			available;
+	uint8_t			acquired;
 	pthread_mutex_t	mutex;
 }	t_lock;
 
@@ -75,6 +77,12 @@ size_t	ft_atos(const char *nptr);
 char	*ft_stoa(size_t n);
 
 ssize_t	ft_pstderr(const char *str);
+
+void	ft_lock_free(t_lock *lock, size_t size);
+t_lock	*ft_lock_init(size_t size);
+uint8_t	ft_lock_acquire(t_lock *lock);
+void	ft_lock_release(t_lock *lock);
+uint8_t	ft_lock_locked(t_lock *lock);
 
 void	*ft_routine(void *arg);
 uint8_t	ft_simulate(t_args args);
