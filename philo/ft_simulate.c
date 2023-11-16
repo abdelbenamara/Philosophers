@@ -6,45 +6,13 @@
 /*   By: abenamar <abenamar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 19:54:11 by abenamar          #+#    #+#             */
-/*   Updated: 2023/11/14 09:56:44 by abenamar         ###   ########.fr       */
+/*   Updated: 2023/11/17 00:05:55 by abenamar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void	ft_free_lock(t_lock *lock, size_t size)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < size)
-	{
-		pthread_mutex_destroy(&lock[i].mutex);
-		++i;
-	}
-	free(lock);
-}
-
-static t_lock	*ft_init_lock(size_t size)
-{
-	t_lock	*lock;
-	size_t	i;
-
-	lock = malloc(size * sizeof(t_lock));
-	if (!lock)
-		return (ft_pstderr(__ERR_4), NULL);
-	i = 0;
-	while (i < size)
-	{
-		lock[i].available = 1;
-		if (pthread_mutex_init(&lock[i].mutex, NULL))
-			return (ft_free_lock(lock, i + 1), ft_pstderr(__ERR_5), NULL);
-		++i;
-	}
-	return (lock);
-}
-
-static t_philo	*ft_init_philo(t_args args, t_lock *lock)
+static t_philo	*ft_philo_init(t_args args, t_lock *lock)
 {
 	t_philo	*philo;
 	size_t	i;
@@ -61,7 +29,7 @@ static t_philo	*ft_init_philo(t_args args, t_lock *lock)
 		philo[i].left_fork = &lock[i];
 		philo[i].right_fork = NULL;
 		if (args.number_of_philosophers > 1)
-			philo[i].right_fork = &lock[i + 1 % args.number_of_philosophers];
+			philo[i].right_fork = &lock[(i + 1) % args.number_of_philosophers];
 		philo[i].time_to_die = args.time_to_die;
 		philo[i].time_to_eat = args.time_to_eat;
 		philo[i].time_to_sleep = args.time_to_sleep;
@@ -72,31 +40,64 @@ static t_philo	*ft_init_philo(t_args args, t_lock *lock)
 	return (philo);
 }
 
+static void	ft_philo_detach(t_philo *philo, size_t size)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < size)
+	{
+		pthread_detach(philo[i].id);
+		++i;
+	}
+}
+
+static uint8_t	ft_philo_create(t_philo *philo, size_t size)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < size)
+	{
+		if (pthread_create(&philo[i].id, NULL, &ft_routine, &philo[i]))
+			return (ft_philo_detach(philo, i), ft_pstderr(__ERR_6), 0);
+		++i;
+	}
+	return (1);
+}
+
+static void	ft_philo_join(t_philo *philo, size_t size)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < size)
+	{
+		pthread_join(philo[i].id, NULL);
+		++i;
+	}
+}
+
 uint8_t	ft_simulate(t_args args)
 {
 	t_lock	*lock;
 	t_philo	*philo;
-	size_t	i;
 
 	if (!args.number_of_philosophers)
 		return (1);
-	lock = ft_init_lock(args.number_of_philosophers + 1);
+	lock = ft_lock_init(args.number_of_philosophers + 1);
 	if (!lock)
 		return (0);
-	philo = ft_init_philo(args, lock);
+	philo = ft_philo_init(args, lock);
 	if (!philo)
-		return (ft_free_lock(lock, args.number_of_philosophers), 0);
-	i = 0;
-	while (i < args.number_of_philosophers)
-	{
-		if (pthread_create(&philo[i].id, NULL, &ft_routine, &philo[i]))
-			return (ft_free_lock(lock, args.number_of_philosophers), \
-				free(philo), ft_pstderr(__ERR_6), 0);
-		++i;
-	}
-	i = 0;
-	while (i < args.number_of_philosophers)
-		(pthread_join(philo[i].id, NULL), ++i);
-	(ft_free_lock(lock, args.number_of_philosophers), free(philo));
+		return (ft_lock_free(lock, args.number_of_philosophers), 0);
+	ft_lock_acquire(&lock[args.number_of_philosophers]);
+	if (!ft_philo_create(philo, args.number_of_philosophers))
+		return (ft_lock_free(lock, args.number_of_philosophers), \
+			free(philo), 0);
+	ft_lock_release(&lock[args.number_of_philosophers]);
+	ft_philo_join(philo, args.number_of_philosophers);
+	ft_lock_free(lock, args.number_of_philosophers);
+	free(philo);
 	return (1);
 }
