@@ -6,7 +6,7 @@
 /*   By: abenamar <abenamar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 19:42:35 by abenamar          #+#    #+#             */
-/*   Updated: 2023/11/19 11:46:49 by abenamar         ###   ########.fr       */
+/*   Updated: 2023/11/19 11:52:56 by abenamar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,11 @@ static void	ft_philo_eat(t_philo *philo, struct timeval start)
 	forks = ft_lock_acquire(philo->left_fork);
 	if (forks == 1 && philo->right_fork)
 	{
+		printf("%ld %ld has taken a fork\n", ft_timestamp(start), philo->number);
 		forks += ft_lock_acquire(philo->right_fork);
 		if (forks == 2)
 		{
-			printf("%ld %ld has taken a fork\n%ld %ld has taken a fork\n", \
-				ft_timestamp(start), philo->number, \
+			printf("%ld %ld has taken a fork\n", \
 				ft_timestamp(start), philo->number);
 			gettimeofday(&philo->start, NULL);
 			philo->state = eating;
