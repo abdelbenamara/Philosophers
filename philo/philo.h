@@ -6,7 +6,7 @@
 /*   By: abenamar <abenamar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 14:12:40 by abenamar          #+#    #+#             */
-/*   Updated: 2023/11/17 00:07:56 by abenamar         ###   ########.fr       */
+/*   Updated: 2023/11/19 11:20:40 by abenamar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@
 # include <sys/time.h>
 # include <unistd.h>
 
-# define __DEBUG 	"DEBUG - "
 # define __USAGE	"\
 Usage: philo number_of_philosophers time_to_die time_to_eat time_to_sleep\
  [number_of_times_each_philosopher_must_eat]\n"
@@ -58,16 +57,19 @@ typedef struct s_lock
 typedef struct s_philo
 {
 	pthread_t		id;
-	t_state			state;
-	t_lock			*simulation;
-	struct timeval	start;
-	t_lock			*left_fork;
-	t_lock			*right_fork;
 	size_t			number;
 	size_t			time_to_die;
 	size_t			time_to_eat;
 	size_t			time_to_sleep;
 	size_t			*number_of_times_must_eat;
+	size_t			meal_count;
+	t_state			state;
+	t_lock			*run;
+	t_lock			*abort;
+	t_lock			*left_fork;
+	t_lock			*right_fork;
+	t_lock			*meal_goal;	
+	struct timeval	start;
 }	t_philo;
 
 size_t	ft_strlen(const char *s);
