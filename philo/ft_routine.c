@@ -6,7 +6,7 @@
 /*   By: abenamar <abenamar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 19:42:35 by abenamar          #+#    #+#             */
-/*   Updated: 2023/11/17 00:17:32 by abenamar         ###   ########.fr       */
+/*   Updated: 2023/11/19 11:46:49 by abenamar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,14 @@ static void	ft_philo_eat(t_philo *philo, struct timeval start)
 		forks += ft_lock_acquire(philo->right_fork);
 		if (forks == 2)
 		{
+			printf("%ld %ld has taken a fork\n%ld %ld has taken a fork\n", \
+				ft_timestamp(start), philo->number, \
+				ft_timestamp(start), philo->number);
 			gettimeofday(&philo->start, NULL);
 			philo->state = eating;
 			printf("%ld %ld is eating\n", ft_timestamp(start), philo->number);
+			if (philo->number_of_times_must_eat)
+				++philo->meal_count;
 		}
 		else
 			ft_lock_release(philo->left_fork);
@@ -48,6 +53,9 @@ static void	ft_philo_sleep(t_philo *philo, struct timeval start)
 		ft_lock_release(philo->right_fork);
 		philo->state = sleeping;
 		printf("%ld %ld is sleeping\n", ft_timestamp(start), philo->number);
+		if (philo->number_of_times_must_eat
+			&& philo->meal_count >= *philo->number_of_times_must_eat)
+			ft_lock_acquire(philo->meal_goal);
 	}
 }
 
@@ -66,12 +74,15 @@ void	*ft_routine(void *arg)
 	struct timeval	start;
 
 	philo = (t_philo *) arg;
-	while (ft_lock_locked(philo->simulation))
+	while (ft_lock_locked(philo->run))
 		usleep(1);
+	if (ft_lock_locked(philo->abort))
+		return (NULL);
 	gettimeofday(&start, NULL);
 	gettimeofday(&philo->start, NULL);
 	printf("%ld %ld is thinking\n", ft_timestamp(start), philo->number);
-	while (ft_timestamp(philo->start) < philo->time_to_die)
+	while (!ft_lock_locked(philo->run)
+		&& ft_timestamp(philo->start) < philo->time_to_die)
 	{
 		if (philo->state == thinking)
 			ft_philo_eat(philo, start);
@@ -79,11 +90,9 @@ void	*ft_routine(void *arg)
 			ft_philo_sleep(philo, start);
 		else if (philo->state == sleeping)
 			ft_philo_think(philo, start);
-		if (ft_lock_locked(philo->simulation))
-			break ;
 		usleep(1);
 	}
-	if (ft_lock_acquire(philo->simulation))
+	if (ft_lock_acquire(philo->run))
 		printf("%ld %ld died\n", ft_timestamp(start), philo->number);
-	return (EXIT_SUCCESS);
+	return (NULL);
 }
