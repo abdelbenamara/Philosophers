@@ -6,7 +6,7 @@
 /*   By: abenamar <abenamar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 21:48:40 by abenamar          #+#    #+#             */
-/*   Updated: 2023/11/16 21:49:17 by abenamar         ###   ########.fr       */
+/*   Updated: 2023/11/22 10:26:17 by abenamar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ t_lock	*ft_lock_init(size_t size)
 	{
 		lock[i].acquired = 0;
 		if (pthread_mutex_init(&lock[i].mutex, NULL))
-			return (ft_lock_free(lock, i + 1), ft_pstderr(__ERR_5), NULL);
+			return (ft_lock_free(lock, i), ft_pstderr(__ERR_5), NULL);
 		++i;
 	}
 	return (lock);
