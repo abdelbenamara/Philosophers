@@ -6,7 +6,7 @@
 /*   By: abenamar <abenamar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 19:54:11 by abenamar          #+#    #+#             */
-/*   Updated: 2023/11/19 11:21:11 by abenamar         ###   ########.fr       */
+/*   Updated: 2023/11/22 12:55:40 by abenamar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,12 +63,10 @@ static uint8_t	ft_philo_create(t_philo *philo, t_args args)
 	return (1);
 }
 
-static uint8_t	ft_philo_join(t_philo *philo, t_args args)
+static void	ft_philo_join(t_philo *philo, t_args args)
 {
-	uint8_t	result;
 	size_t	i;
 
-	result = 1;
 	if (args.number_of_times_each_philosopher_must_eat)
 	{
 		i = 0;
@@ -87,7 +85,6 @@ static uint8_t	ft_philo_join(t_philo *philo, t_args args)
 		pthread_join(philo[i].id, NULL);
 		++i;
 	}
-	return (result);
 }
 
 uint8_t	ft_simulate(t_args args)
@@ -110,9 +107,7 @@ uint8_t	ft_simulate(t_args args)
 		return (ft_lock_free(lock, args.number_of_philosophers + 2), \
 			free(philo), ft_pstderr(__ERR_6), 0);
 	ft_lock_release(philo->run);
-	if (!ft_philo_join(philo, args))
-		return (ft_lock_free(lock, args.number_of_philosophers + 2), \
-			free(philo), 0);
+	ft_philo_join(philo, args);
 	ft_lock_free(lock, args.number_of_philosophers + 2);
 	free(philo);
 	return (1);
