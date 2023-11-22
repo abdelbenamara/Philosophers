@@ -6,7 +6,7 @@
 /*   By: abenamar <abenamar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 14:12:58 by abenamar          #+#    #+#             */
-/*   Updated: 2023/11/21 02:01:23 by abenamar         ###   ########.fr       */
+/*   Updated: 2023/11/22 09:39:32 by abenamar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ static uint8_t	ft_args_init(t_args *args, char **strs)
 		|| !ft_arg_setup(&args->time_to_eat, strs[2])
 		|| !ft_arg_setup(&args->time_to_sleep, strs[3]))
 		return (ft_pstderr(__ERR_2), 0);
-	if (args->number_of_philosophers > SEM_VALUE_MAX)
+	if (args->number_of_philosophers > SIZE_MAX / sizeof(t_philo))
 		return (ft_pstderr(__ERR_3), 0);
 	args->number_of_times_each_philosopher_must_eat = NULL;
 	if (!(strs[4]))
@@ -83,21 +83,14 @@ static uint8_t	ft_args_init(t_args *args, char **strs)
 int	main(int ac, char **av)
 {
 	t_args	args;
-	sem_t	*forks;
 
 	if (ac < 5 || ac > 6)
 		return (ft_pstderr(__USAGE), 2);
 	if (!ft_args_init(&args, av + 1))
 		return (EXIT_FAILURE);
-	forks = sem_open(__FORKS, O_RDWR | O_CREAT | O_EXCL, \
-		S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP, 0);
-	if (forks == SEM_FAILED)
+	if (!ft_simulate(args))
 		return (free(args.number_of_times_each_philosopher_must_eat), \
-			ft_pstderr(__ERR_5), EXIT_FAILURE);
-	if (!ft_simulate(args, forks))
-		return (free(args.number_of_times_each_philosopher_must_eat), \
-			sem_unlink(__FORKS), EXIT_FAILURE);
+			EXIT_FAILURE);
 	free(args.number_of_times_each_philosopher_must_eat);
-	sem_unlink(__FORKS);
 	return (EXIT_SUCCESS);
 }
