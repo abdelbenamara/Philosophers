@@ -6,7 +6,7 @@
 /*   By: abenamar <abenamar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 14:12:40 by abenamar          #+#    #+#             */
-/*   Updated: 2023/11/21 02:09:32 by abenamar         ###   ########.fr       */
+/*   Updated: 2023/11/22 12:24:32 by abenamar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,6 @@
 # include <sys/wait.h>
 # include <unistd.h>
 
-# define __FORKS	".c71774fe-b9a4-4541-8121-87059fa47eda"
-
 # define __USAGE	"\
 Usage: philo number_of_philosophers time_to_die time_to_eat time_to_sleep\
  [number_of_times_each_philosopher_must_eat]\n"
@@ -40,6 +38,10 @@ Usage: philo number_of_philosophers time_to_die time_to_eat time_to_sleep\
 # define __ERR_5	"Error: insufficient resources to create another semaphore\n"
 # define __ERR_6	"Error: insufficient resources to create another process\n"
 
+# define __SEM_1	".a556e5d6-4f4c-4f8f-9890-56d8fac98a95"
+# define __SEM_2	".b465deb1-73cb-43b5-bbe9-3ecfbbb0a868"
+# define __SEM_3	".cd0fb47a-ec57-4204-8a39-a5f527506a2a"
+
 typedef struct s_args
 {
 	size_t	number_of_philosophers;
@@ -47,6 +49,8 @@ typedef struct s_args
 	size_t	time_to_eat;
 	size_t	time_to_sleep;
 	size_t	*number_of_times_each_philosopher_must_eat;
+	sem_t	*forks;
+	sem_t	*meal_goal;	
 }	t_args;
 
 typedef enum e_state
@@ -65,6 +69,9 @@ typedef struct s_philo
 	size_t			*number_of_times_must_eat;
 	size_t			meal_count;
 	t_state			state;
+	sem_t			*stop;
+	sem_t			*forks;
+	sem_t			*meal_goal;
 	struct timeval	start;
 }	t_philo;
 
@@ -76,7 +83,10 @@ char	*ft_stoa(size_t n);
 
 ssize_t	ft_pstderr(const char *str);
 
-void	ft_routine(t_philo *philo, size_t number, sem_t *forks);
-uint8_t	ft_simulate(t_args args, sem_t *forks);
+void	ft_sem_free(sem_t **sem);
+sem_t	**ft_sem_init(void);
+
+void	ft_routine(t_philo *philo, size_t number, sem_t **sem);
+uint8_t	ft_simulate(t_args args);
 
 #endif
