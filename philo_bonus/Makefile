@@ -6,7 +6,7 @@
 #    By: abenamar <abenamar@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/04 14:00:25 by abenamar          #+#    #+#              #
-#    Updated: 2023/11/19 12:12:30 by abenamar         ###   ########.fr        #
+#    Updated: 2023/11/22 12:08:57 by abenamar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,6 +23,9 @@ SRCS += ft_atos.c
 SRCS += ft_stoa.c
 
 SRCS += ft_pstderr.c
+
+SRCS += ft_sem_free.c
+SRCS += ft_sem_init.c
 
 SRCS += ft_routine.c
 SRCS += ft_simulate.c
