@@ -6,7 +6,7 @@
 /*   By: abenamar <abenamar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 14:12:58 by abenamar          #+#    #+#             */
-/*   Updated: 2023/11/22 09:39:32 by abenamar         ###   ########.fr       */
+/*   Updated: 2023/11/26 17:14:01 by abenamar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static uint8_t	ft_arg_setup(size_t *nb, const char *nptr)
 	if (!s)
 		return (0);
 	if (ft_strncmp(s, nptr, ft_strlen(s)))
-		return (free(s), 0);
+		return (free(s), ft_pstderr(__ERR_2), 0);
 	free(s);
 	*nb = i;
 	return (1);
@@ -66,14 +66,14 @@ static uint8_t	ft_args_init(t_args *args, char **strs)
 		|| !ft_arg_setup(&args->time_to_die, strs[1])
 		|| !ft_arg_setup(&args->time_to_eat, strs[2])
 		|| !ft_arg_setup(&args->time_to_sleep, strs[3]))
-		return (ft_pstderr(__ERR_2), 0);
+		return (0);
 	if (args->number_of_philosophers > SIZE_MAX / sizeof(t_philo))
 		return (ft_pstderr(__ERR_3), 0);
 	args->number_of_times_each_philosopher_must_eat = NULL;
-	if (!(strs[4]))
+	if (!strs[4])
 		return (1);
 	args->number_of_times_each_philosopher_must_eat = malloc(sizeof(size_t));
-	if (!(args->number_of_times_each_philosopher_must_eat))
+	if (!args->number_of_times_each_philosopher_must_eat)
 		return (ft_pstderr(__ERR_4), 0);
 	if (!ft_arg_setup(args->number_of_times_each_philosopher_must_eat, strs[4]))
 		return (free(args->number_of_times_each_philosopher_must_eat), 0);
@@ -88,6 +88,10 @@ int	main(int ac, char **av)
 		return (ft_pstderr(__USAGE), 2);
 	if (!ft_args_init(&args, av + 1))
 		return (EXIT_FAILURE);
+	if (args.number_of_times_each_philosopher_must_eat
+		&& !*args.number_of_times_each_philosopher_must_eat)
+		return (free(args.number_of_times_each_philosopher_must_eat), \
+			EXIT_SUCCESS);
 	if (!ft_simulate(args))
 		return (free(args.number_of_times_each_philosopher_must_eat), \
 			EXIT_FAILURE);
