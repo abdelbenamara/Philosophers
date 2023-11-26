@@ -6,7 +6,7 @@
 /*   By: abenamar <abenamar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 19:42:35 by abenamar          #+#    #+#             */
-/*   Updated: 2023/11/19 11:52:56 by abenamar         ###   ########.fr       */
+/*   Updated: 2023/11/26 17:14:52 by abenamar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ static void	ft_philo_sleep(t_philo *philo, struct timeval start)
 		philo->state = sleeping;
 		printf("%ld %ld is sleeping\n", ft_timestamp(start), philo->number);
 		if (philo->number_of_times_must_eat
-			&& philo->meal_count >= *philo->number_of_times_must_eat)
+			&& philo->meal_count == *philo->number_of_times_must_eat)
 			ft_lock_acquire(philo->meal_goal);
 	}
 }
