@@ -6,7 +6,7 @@
 /*   By: abenamar <abenamar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 19:42:35 by abenamar          #+#    #+#             */
-/*   Updated: 2023/11/26 17:14:52 by abenamar         ###   ########.fr       */
+/*   Updated: 2023/11/26 19:16:05 by abenamar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ void	*ft_routine(void *arg)
 			ft_philo_think(philo, start);
 		usleep(1);
 	}
-	if (ft_lock_acquire(philo->run))
+	if (ft_timestamp(philo->start) >= philo->time_to_die)
 		printf("%ld %ld died\n", ft_timestamp(start), philo->number);
-	return (NULL);
+	return (ft_lock_acquire(philo->run), NULL);
 }
