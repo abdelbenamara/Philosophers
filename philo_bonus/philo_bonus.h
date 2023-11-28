@@ -6,7 +6,7 @@
 /*   By: abenamar <abenamar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 14:12:40 by abenamar          #+#    #+#             */
-/*   Updated: 2023/11/22 12:24:32 by abenamar         ###   ########.fr       */
+/*   Updated: 2023/11/28 08:18:59 by abenamar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <errno.h>
 # include <fcntl.h>
 # include <limits.h>
+# include <pthread.h>
 # include <semaphore.h>
 # include <signal.h>
 # include <stdio.h>
@@ -37,10 +38,12 @@ Usage: philo number_of_philosophers time_to_die time_to_eat time_to_sleep\
 # define __ERR_4	"Error: out of memory\n"
 # define __ERR_5	"Error: insufficient resources to create another semaphore\n"
 # define __ERR_6	"Error: insufficient resources to create another process\n"
+# define __ERR_7	"Error: insufficient resources to create another thread\n"
 
 # define __SEM_1	".a556e5d6-4f4c-4f8f-9890-56d8fac98a95"
 # define __SEM_2	".b465deb1-73cb-43b5-bbe9-3ecfbbb0a868"
 # define __SEM_3	".cd0fb47a-ec57-4204-8a39-a5f527506a2a"
+# define __SEM_4	".d9978d1b-72be-4abe-8076-3973286245ae"
 
 typedef struct s_args
 {
@@ -49,8 +52,6 @@ typedef struct s_args
 	size_t	time_to_eat;
 	size_t	time_to_sleep;
 	size_t	*number_of_times_each_philosopher_must_eat;
-	sem_t	*forks;
-	sem_t	*meal_goal;	
 }	t_args;
 
 typedef enum e_state
@@ -63,16 +64,19 @@ typedef enum e_state
 typedef struct s_philo
 {
 	pid_t			id;
+	size_t			number;
 	size_t			time_to_die;
 	size_t			time_to_eat;
 	size_t			time_to_sleep;
 	size_t			*number_of_times_must_eat;
 	size_t			meal_count;
 	t_state			state;
-	sem_t			*stop;
+	sem_t			*run;
+	sem_t			*abort;
 	sem_t			*forks;
-	sem_t			*meal_goal;
+	sem_t			*meal_goals;
 	struct timeval	start;
+	struct timeval	global_start;
 }	t_philo;
 
 size_t	ft_strlen(const char *s);
