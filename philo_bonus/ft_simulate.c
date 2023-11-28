@@ -6,7 +6,7 @@
 /*   By: abenamar <abenamar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 19:54:11 by abenamar          #+#    #+#             */
-/*   Updated: 2023/11/22 13:15:15 by abenamar         ###   ########.fr       */
+/*   Updated: 2023/11/28 08:18:57 by abenamar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ static void	ft_philo_setup(t_philo *philo, t_args args, sem_t **sem)
 	while (i < args.number_of_philosophers)
 	{
 		philo[i].id = -1;
+		philo[i].number = i + 1;
 		philo[i].time_to_die = args.time_to_die;
 		philo[i].time_to_eat = args.time_to_eat;
 		philo[i].time_to_sleep = args.time_to_sleep;
@@ -27,10 +28,10 @@ static void	ft_philo_setup(t_philo *philo, t_args args, sem_t **sem)
 			= args.number_of_times_each_philosopher_must_eat;
 		philo[i].meal_count = 0;
 		philo[i].state = thinking;
-		philo[i].stop = sem[0];
+		philo[i].abort = sem[0];
 		philo[i].forks = sem[1];
-		philo[i].meal_goal = sem[2];
-		sem_post(philo->forks);
+		philo[i].meal_goals = sem[2];
+		philo[i].run = sem[3];
 		++i;
 	}
 }
@@ -62,18 +63,50 @@ static uint8_t	ft_philo_fork(t_philo *philo, t_args args, sem_t **sem)
 	return (1);
 }
 
-static void	ft_philo_wait(t_philo *philo, t_args args)
+static void	*ft_meal_goals_routine(void *arg)
 {
+	t_philo	*philo;
 	size_t	i;
 
-	sem_wait(philo->stop);
+	philo = (t_philo *) arg;
+	i = 0;
+	while (i < philo->number)
+	{
+		sem_post(philo->forks);
+		++i;
+	}
+	i = 0;
+	while (i < philo->number)
+	{
+		sem_wait(philo->meal_goals);
+		++i;
+	}
+	sem_post(philo->abort);
+	return (NULL);
+}
+
+static void	ft_philo_wait(t_philo *philo, t_args args)
+{
+	size_t		i;
+	pthread_t	id;
+
+	if (pthread_create(&id, NULL, &ft_meal_goals_routine, \
+		&philo[args.number_of_philosophers - 1]))
+	{
+		ft_pstderr(__ERR_7);
+		sem_post(philo->abort);
+	}
+	sem_post(philo->run);
+	sem_wait(philo->abort);
 	i = 0;
 	while (i < args.number_of_philosophers)
 	{
+		sem_post(philo->meal_goals);
 		kill(philo[i].id, SIGKILL);
 		waitpid(philo[i].id, NULL, WUNTRACED);
 		++i;
 	}
+	pthread_join(id, NULL);
 }
 
 uint8_t	ft_simulate(t_args args)
