@@ -6,7 +6,7 @@
 #    By: abenamar <abenamar@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/04 14:00:25 by abenamar          #+#    #+#              #
-#    Updated: 2023/11/16 21:50:54 by abenamar         ###   ########.fr        #
+#    Updated: 2023/11/28 08:30:47 by abenamar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -61,4 +61,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: re fclean clean all 
+.PHONY: re fclean clean all
