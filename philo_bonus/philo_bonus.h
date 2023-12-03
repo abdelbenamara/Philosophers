@@ -6,7 +6,7 @@
 /*   By: abenamar <abenamar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 14:12:40 by abenamar          #+#    #+#             */
-/*   Updated: 2023/11/28 08:18:59 by abenamar         ###   ########.fr       */
+/*   Updated: 2023/12/03 12:09:53 by abenamar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ Usage: philo number_of_philosophers time_to_die time_to_eat time_to_sleep\
 # define __ERR_2	"Error: argument value is too big\n"
 # define __ERR_3	"Error: too many philosophers\n"
 # define __ERR_4	"Error: out of memory\n"
-# define __ERR_5	"Error: insufficient resources to create another semaphore\n"
+# define __ERR_5	"\
+Error: insufficient resources to create another semaphore\n"
 # define __ERR_6	"Error: insufficient resources to create another process\n"
 # define __ERR_7	"Error: insufficient resources to create another thread\n"
 
