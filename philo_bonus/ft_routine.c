@@ -6,7 +6,7 @@
 /*   By: abenamar <abenamar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 19:42:35 by abenamar          #+#    #+#             */
-/*   Updated: 2023/11/28 08:18:57 by abenamar         ###   ########.fr       */
+/*   Updated: 2023/12/03 11:30:59 by abenamar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static size_t	ft_timestamp(struct timeval start)
 	struct timeval	now;
 
 	gettimeofday(&now, NULL);
-	return ((now.tv_sec - start.tv_sec) * 1000 
+	return ((now.tv_sec - start.tv_sec) * 1000 \
 		+ (now.tv_usec - start.tv_usec) / 1000);
 }
 
@@ -38,13 +38,14 @@ static void	*ft_time_to_die_routine(void *arg)
 				printf("%ld %ld died\n", \
 					ft_timestamp(philo->global_start), philo->number);
 				sem_post(philo->abort);
+				usleep(10000);
 				watch = 0;
 			}
 		}
 		else
 			watch = 0;
 		sem_post(philo->run);
-		usleep(1);
+		usleep(1000);
 	}
 	return (NULL);
 }
