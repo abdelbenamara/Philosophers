@@ -8,6 +8,9 @@ make -C philo
 ```
 make -C philo_bonus
 ```
+```
+make -C philo_bonus bonus
+```
 
 ## Usage
 
