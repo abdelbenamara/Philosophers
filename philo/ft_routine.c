@@ -6,7 +6,7 @@
 /*   By: abenamar <abenamar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 19:42:35 by abenamar          #+#    #+#             */
-/*   Updated: 2023/11/26 19:16:05 by abenamar         ###   ########.fr       */
+/*   Updated: 2023/12/03 11:28:00 by abenamar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static size_t	ft_timestamp(struct timeval start)
 	struct timeval	now;
 
 	gettimeofday(&now, NULL);
-	return ((now.tv_sec - start.tv_sec) * 1000 
+	return ((now.tv_sec - start.tv_sec) * 1000 \
 		+ (now.tv_usec - start.tv_usec) / 1000);
 }
 
